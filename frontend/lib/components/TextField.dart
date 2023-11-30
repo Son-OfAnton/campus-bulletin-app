@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String hintText;
   final double bottomMargin;
 
   const CustomTextField({
+    Key? key,
     required this.hintText,
     required this.bottomMargin,
-  });
+  }) : super(key: key);
 
+  @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.only(bottom: bottomMargin),
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            borderRadius: BorderRadius.circular(8),
-          ),
+          margin: EdgeInsets.only(bottom: widget.bottomMargin),
           child: TextField(
             decoration: InputDecoration(
-              hintText: hintText,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 0),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              border: OutlineInputBorder(),
+              labelText: widget.hintText,
+              labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ),
         ),
-        SizedBox(height: 10),
       ],
     );
   }
 }
-
