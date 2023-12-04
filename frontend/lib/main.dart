@@ -8,6 +8,7 @@ import 'pages/login.dart';
 import 'pages/post.dart';
 import 'pages/single_channel.dart';
 import 'pages/view_profile.dart';
+import 'pages/signup.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,12 +30,13 @@ class MyApp extends StatelessWidget {
       // darkTheme: ThemeData.dark(),
       home: const MyHomePage(title: 'Home Page'),
       routes: {
-        '/login': (context) => const Login(),
+        '/login': (context) => Login(),
         '/channels': (context) => const Channels(),
         '/editProfile': (context) => const EditProfile(),
         '/post': (context) => const Post(),
         '/singleChannel': (context) => const SingleChannel(),
         '/viewProfile': (context) => const ViewProfile(),
+        '/signup': (context) => Signup(),
       },
     );
   }
@@ -57,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     '/post',
     '/singleChannel',
     '/viewProfile',
+     '/signup',
   ];
 
   @override
