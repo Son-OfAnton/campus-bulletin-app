@@ -7,8 +7,18 @@ class SingleChannel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('SingleChannel'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Single Channel',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(15),
+          ),
+        ),
       ),
       body: const Center(
         child: Text('SingleChannel'),

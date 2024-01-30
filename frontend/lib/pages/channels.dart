@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+
 class Channels extends StatelessWidget {
   const Channels({super.key});
 
@@ -8,31 +9,44 @@ class Channels extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text('Channels'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: const Text(
+            'Channels',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           centerTitle: true,
+          foregroundColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(15),
+            ),
+          ),
         ),
         body: Column(
           children: [
             Row(
               children: [
-                Spacer(),
+                const Spacer(),
                 IconButton(
-                    icon: FaIcon(FontAwesomeIcons.bell), onPressed: () {}),
+                  icon: FaIcon(FontAwesomeIcons.plus,
+                      color: Theme.of(context).colorScheme.primary),
+                  onPressed: () {},
+                  padding: const EdgeInsets.only(top: 16.0, right: 16.0),
+                ),
               ],
             ),
             searchBar(),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(onPressed: () {}, child: Text('All')),
-                TextButton(onPressed: () {}, child: Text('Admin')),
+                TextButton(onPressed: () {}, child: const Text('All')),
+                TextButton(onPressed: () {}, child: const Text('My Channels')),
               ],
             ),
             Expanded(
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.0),
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListView.builder(
                   itemCount: 8,
                   itemBuilder: (BuildContext context, int index) {
@@ -48,7 +62,7 @@ class Channels extends StatelessWidget {
 
 Widget searchBar() {
   return Container(
-    margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 20.0),
+    margin: const EdgeInsets.only(left: 24.0, right: 24.0, top: 20.0),
     decoration: BoxDecoration(
       borderRadius:
           BorderRadius.circular(30.0), // Adjust the radius for pill shape
@@ -58,7 +72,7 @@ Widget searchBar() {
       padding: const EdgeInsets.only(left: 28.0, right: 8),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: TextField(
               style: TextStyle(color: Colors.grey, fontSize: 18.0),
               decoration: InputDecoration(
@@ -67,8 +81,8 @@ Widget searchBar() {
               ),
             ),
           ),
-          SizedBox(width: 8.0),
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
+          const SizedBox(width: 8.0),
+          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
         ],
       ),
     ),
@@ -78,7 +92,7 @@ Widget searchBar() {
 Widget postCard() {
   return Card(
     child: Column(children: [
-      ListTile(
+      const ListTile(
         leading: FaIcon(FontAwesomeIcons.person),
         title:
             Text('Channel Name', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -89,8 +103,8 @@ Widget postCard() {
       Container(
         color: Colors.white,
         child: Container(
-          margin: EdgeInsets.only(left: 16.0, bottom: 8.0),
-          child: Row(
+          margin: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+          child: const Row(
             children: [Text('Nov 24, 2023')],
           ),
         ),

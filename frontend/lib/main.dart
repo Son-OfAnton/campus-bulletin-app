@@ -9,9 +9,10 @@ import 'pages/post.dart';
 import 'pages/single_channel.dart';
 import 'pages/view_profile.dart';
 import 'pages/signup.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -59,15 +60,57 @@ class _MyHomePageState extends State<MyHomePage> {
     '/post',
     '/singleChannel',
     '/viewProfile',
-     '/signup',
+    '/signup',
   ];
+
+  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Home Page',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(15),
+          ),
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.person),
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ],
+        surfaceTintColor: Colors.white,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        selectedIndex: currentPageIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/channels');
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/editProfile');
+              break;
+          }
+        },
       ),
       body: Center(
         child: Column(

@@ -1,13 +1,17 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
+
   @override
   Size get preferredSize => Size.fromHeight(100.0);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      child: Container(),
       painter: AppBarCurvedPainter(),
+      child: Container(),
     );
   }
 }
