@@ -1,12 +1,34 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/Providers/auth_provider.dart';
+import 'package:frontend/utils.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:motion_toast/motion_toast.dart';
 
+final isSubscribedSelectedProvider = StateProvider<bool>((ref) => true);
 
-class Channels extends StatelessWidget {
+class Channels extends ConsumerWidget {
   const Channels({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    File? imageFile = ref.watch(imageFileProvider);
+    ImageFileNotifier imageFileNotifier = ref.watch(imageFileProvider.notifier);
+
+    StateController<bool> isSubscribedSelectedContoller =
+        ref.watch(isSubscribedSelectedProvider.notifier);
+    bool isSubscribeSelected = isSubscribedSelectedContoller.state;
+
+    Future<String> currUserId = getCurrUserId();
+
+    TextEditingController channelNameController = TextEditingController();
+    TextEditingController channelDescriptionController =
+        TextEditingController();
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
@@ -30,7 +52,76 @@ class Channels extends StatelessWidget {
                 IconButton(
                   icon: FaIcon(FontAwesomeIcons.plus,
                       color: Theme.of(context).colorScheme.primary),
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Create Channel'),
+                            content: SingleChildScrollView(
+                              padding: EdgeInsets.all(0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 15.0),
+                                    child: TextButton(
+                                      onPressed: () async {
+                                        await imageFileNotifier
+                                            .pickImage(ImageSource.gallery);
+                                      },
+                                      child: Text('Pick a profile image'),
+                                    ),
+                                  ),
+                                  if (imageFile != null)
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: FileImage(imageFile),
+                                    ),
+                                  Form(
+                                      child: Column(
+                                    children: [
+                                      TextFormField(
+                                        controller: channelNameController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Channel Name',
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        controller:
+                                            channelDescriptionController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Channel Description',
+                                        ),
+                                      ),
+                                    ],
+                                  ))
+                                ],
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  imageFileNotifier.clearImage();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  createChannel(
+                                      channelNameController.text,
+                                      channelDescriptionController.text,
+                                      imageFile!);
+                                  imageFileNotifier.clearImage();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Create'),
+                              ),
+                            ],
+                          );
+                        });
+                  },
                   padding: const EdgeInsets.only(top: 16.0, right: 16.0),
                 ),
               ],
@@ -40,20 +131,64 @@ class Channels extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(onPressed: () {}, child: const Text('All')),
-                TextButton(onPressed: () {}, child: const Text('My Channels')),
+                TextButton(
+                    onPressed: () {
+                      isSubscribedSelectedContoller.state = true;
+                      debugPrint('isSubscribedSelected: $isSubscribeSelected');
+                    },
+                    child: const Text('Subscribed')),
+                TextButton(
+                    onPressed: () {
+                      isSubscribedSelectedContoller.state = false;
+                      debugPrint('isSubscribedSelected: $isSubscribeSelected');
+                    },
+                    child: const Text('My Channels')),
               ],
             ),
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ListView.builder(
-                  itemCount: 8,
-                  itemBuilder: (BuildContext context, int index) {
-                    return postCard();
-                  },
-                ),
-              ),
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: FutureBuilder(
+                      // future: isSubscribeSelected
+                      // ? getSubscribedChannels()
+                      // : getMyChannels(currUserId as String),
+                      future: getSubscribedChannels(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          Future.delayed(Duration.zero, () {
+                            MotionToast.error(
+                              title: Text("Error"),
+                              description: Text('Unable to load channels'),
+                            ).show(context);
+                          });
+                          return Container();
+                        } else if (snapshot.data!.isEmpty) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.sentiment_dissatisfied,
+                                  size: 100.0, color: Colors.grey),
+                              Text('No channels found',
+                                  style: TextStyle(
+                                      fontSize: 20.0, color: Colors.grey)),
+                            ],
+                          );
+                        } else {
+                          return ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                Map<String, dynamic> channel =
+                                    snapshot.data![index];
+
+                                return postCard(
+                                    channel['name'], channel['description']);
+                              });
+                        }
+                      })),
             ),
           ],
         ));
@@ -89,14 +224,13 @@ Widget searchBar() {
   );
 }
 
-Widget postCard() {
+Widget postCard(String channelName, String channelDescription) {
   return Card(
     child: Column(children: [
-      const ListTile(
+      ListTile(
         leading: FaIcon(FontAwesomeIcons.person),
-        title:
-            Text('Channel Name', style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('Channel Description'),
+        title: Text(channelName, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(channelDescription),
         trailing: FaIcon(FontAwesomeIcons.circle),
         tileColor: Colors.white,
       ),

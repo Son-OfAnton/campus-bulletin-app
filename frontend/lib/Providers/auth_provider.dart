@@ -86,4 +86,20 @@ class ImageFileNotifier extends StateNotifier<File?> {
       state = File(pickedFile.path);
     }
   }
+
+  void clearImage() {
+    state = null;
+  }
 }
+
+// final isSubscribedSelectedProvider = StateNotifierProvider<IsSubscribedSelectedNotifier, bool>((ref) {
+//   return IsSubscribedSelectedNotifier();
+// });
+
+// class IsSubscribedSelectedNotifier extends StateNotifier<bool> {
+//   IsSubscribedSelectedNotifier() : super(false);
+
+//   void toggle() {
+//     state = !state;
+//   }
+// }
