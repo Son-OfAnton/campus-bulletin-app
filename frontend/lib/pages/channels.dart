@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +10,19 @@ import 'package:frontend/Providers/auth_provider.dart';
 import 'package:frontend/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:motion_toast/motion_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+final isToggledProvider = StateNotifierProvider<ToggleController, bool>(
+  (ref) => ToggleController(),
+);
+
+class ToggleController extends StateNotifier<bool> {
+  ToggleController() : super(true); // Initial state is true
+
+  void toggle() {
+    state = !state;
+  }
+}
 
 final isSubscribedSelectedProvider = StateProvider<bool>((ref) => true);
 
@@ -23,7 +38,7 @@ class Channels extends ConsumerWidget {
         ref.watch(isSubscribedSelectedProvider.notifier);
     bool isSubscribeSelected = isSubscribedSelectedContoller.state;
 
-    Future<String> currUserId = getCurrUserId();
+    final isToggled = ref.watch(isToggledProvider);
 
     TextEditingController channelNameController = TextEditingController();
     TextEditingController channelDescriptionController =
@@ -133,14 +148,19 @@ class Channels extends ConsumerWidget {
               children: [
                 TextButton(
                     onPressed: () {
-                      isSubscribedSelectedContoller.state = true;
+                      if (!isToggled) {
+                        ref.read(isToggledProvider.notifier).toggle();
+                      }
                       debugPrint('isSubscribedSelected: $isSubscribeSelected');
                     },
                     child: const Text('Subscribed')),
                 TextButton(
                     onPressed: () {
-                      isSubscribedSelectedContoller.state = false;
-                      debugPrint('isSubscribedSelected: $isSubscribeSelected');
+                      if (isToggled) {
+                        ref.read(isToggledProvider.notifier).toggle();
+                      }
+                      debugPrint(
+                          '>> isSubscribedSelected: $isSubscribeSelected');
                     },
                     child: const Text('My Channels')),
               ],
@@ -149,10 +169,9 @@ class Channels extends ConsumerWidget {
               child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: FutureBuilder(
-                      // future: isSubscribeSelected
-                      // ? getSubscribedChannels()
-                      // : getMyChannels(currUserId as String),
-                      future: getSubscribedChannels(),
+                      future: isToggled
+                          ? getSubscribedChannels()
+                          : getMyChannels(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {

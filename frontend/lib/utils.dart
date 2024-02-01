@@ -74,27 +74,29 @@ Future<List<dynamic>> getSubscribedChannels() async {
   return channels;
 }
 
-Future<List<dynamic>> getMyChannels(String id) async {
+Future<List<dynamic>> getMyChannels() async {
+  String id = await getCurrUserId();
+  debugPrint('#[Inside utils] current user id: $id');
+  Future.delayed(const Duration(seconds: 3));
   List<dynamic> channels = [];
   Dio dio = Dio();
   String token = await getToken();
 
   try {
-    final response = await dio.get(
-        Uri.parse('http://localhost:5279/api/channels/creator/$id') as String,
+    final response = await dio.get('http://localhost:5279/api/channels/admin',
         options: Options(headers: {'Authorization': 'Bearer $token'}));
 
     Map<String, dynamic> responseObj = jsonDecode(response.toString());
 
-    debugPrint('Get Channels Response: $response');
+    debugPrint('My Channels Response: $response');
     if (response.statusCode == 200) {
-      debugPrint('Channels Fetched');
+      debugPrint('My Channels Fetched wooohooooo');
       channels = responseObj['data'];
     } else {
-      debugPrint('Channels Not Fetched');
+      debugPrint('My Channels Not Fetched');
     }
   } catch (e) {
-    debugPrint('Channels Fetch Error: $e');
+    debugPrint('My Channels Fetch Error: $e');
   }
 
   return channels;
@@ -121,5 +123,6 @@ Future<String> getCurrUserId() async {
     debugPrint('User Fetch Error: $e');
   }
 
+  debugPrint('I should not arrive here');
   return '';
 }

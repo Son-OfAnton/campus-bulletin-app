@@ -1,34 +1,3 @@
-// import 'package:flutter/material.dart';
-
-// class SingleChannel extends StatelessWidget {
-//   const SingleChannel({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Theme.of(context).colorScheme.primary,
-//         title: const Text(
-//           'Single Channel',
-//           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//         ),
-//         centerTitle: true,
-//         foregroundColor: Colors.white,
-//         shape: const RoundedRectangleBorder(
-//           borderRadius: BorderRadius.vertical(
-//             bottom: Radius.circular(15),
-//           ),
-//         ),
-//       ),
-//       body: const Center(
-//         child: Text('SingleChannel'),
-//       ),
-//     );
-//   }
-// }
-
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:frontend/models/message.model.dart';
@@ -117,6 +86,7 @@ class _SingleChannelState extends State<SingleChannel> {
           ),
           IconButton(
             icon: Icon(Icons.send),
+            color: Theme.of(context).colorScheme.primary,
             iconSize: 32,
             onPressed: () {
               _sendMessage();
