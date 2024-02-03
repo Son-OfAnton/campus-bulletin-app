@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Home Page'),
       routes: {
         '/login': (context) => Login(),
-        '/channels': (context) => const Channels(),
+        '/channels': (context) => Channels(),
         '/editProfile': (context) => const EditProfile(),
         '/post': (context) => const Post(),
         '/singleChannel': (context) => const SingleChannel(),

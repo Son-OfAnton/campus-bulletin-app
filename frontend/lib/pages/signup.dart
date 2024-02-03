@@ -53,7 +53,7 @@ class Signup extends ConsumerWidget {
           'http://localhost:5006/api/user/register',
           data: student.toJson(),
         );
-        if(response.statusCode == 201) {
+        if (response.statusCode == 201) {
           debugPrint('User registration successful: $response');
           sharedPrefs.whenData((sharedPrefs) async {
             await sharedPrefs.setString('firstName', student.firstName!);
@@ -74,7 +74,6 @@ class Signup extends ConsumerWidget {
         debugPrint('Error: $e');
         // debugPrint('Response: $response');
         debugPrint('Studentinfo: ${student.toJson()}');
-        
       }
     }
 

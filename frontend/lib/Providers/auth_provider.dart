@@ -92,6 +92,29 @@ class ImageFileNotifier extends StateNotifier<File?> {
   }
 }
 
+final channelImageProvider =
+    StateNotifierProvider<ChannelImageNotifier, File?>((ref) {
+  return ChannelImageNotifier();
+});
+
+class ChannelImageNotifier extends StateNotifier<File?> {
+  ChannelImageNotifier() : super(null);
+
+  final ImagePicker _imagePicker = ImagePicker();
+  String imageUrl = 'https://picsum.photos/250?image=9';
+
+  Future<void> pickImage(ImageSource source) async {
+    final pickedFile = await _imagePicker.pickImage(source: source);
+    if (pickedFile != null) {
+      state = File(pickedFile.path);
+    }
+  }
+
+  void clearImage() {
+    state = null;
+  }
+}
+
 // final isSubscribedSelectedProvider = StateNotifierProvider<IsSubscribedSelectedNotifier, bool>((ref) {
 //   return IsSubscribedSelectedNotifier();
 // });
