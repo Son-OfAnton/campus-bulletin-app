@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import '../components/NotificationBellIcon.dart';
 
 class Channels extends StatelessWidget {
   const Channels({super.key});
@@ -21,6 +21,9 @@ class Channels extends StatelessWidget {
               bottom: Radius.circular(15),
             ),
           ),
+           actions: <Widget>[
+    NotificationBellIcon(),
+  ],
         ),
         body: Column(
           children: [

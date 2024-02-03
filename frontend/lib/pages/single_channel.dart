@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../components/NotificationBellIcon.dart';
 class SingleChannel extends StatelessWidget {
   const SingleChannel({super.key});
 
@@ -19,6 +19,9 @@ class SingleChannel extends StatelessWidget {
             bottom: Radius.circular(15),
           ),
         ),
+          actions: <Widget>[
+    NotificationBellIcon(),
+  ],
       ),
       body: const Center(
         child: Text('SingleChannel'),

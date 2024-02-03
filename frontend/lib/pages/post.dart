@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
-
+import '../components/NotificationBellIcon.dart';
 class Post extends StatelessWidget {
   const Post({super.key});
 
@@ -21,6 +21,9 @@ class Post extends StatelessWidget {
             bottom: Radius.circular(15),
           ),
         ),
+         actions: <Widget>[
+    NotificationBellIcon(),
+  ],
       ),
       body: SingleChildScrollView(
         child: Padding(

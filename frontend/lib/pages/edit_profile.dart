@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import '../components/Photoviewer.dart';
 import '../components/viewProfileTextfield.dart';
 import '../components/Button.dart';
-
+import '../components/NotificationBellIcon.dart';
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
 
@@ -67,6 +67,9 @@ class _EditProfileState extends State<EditProfile> {
             bottom: Radius.circular(15),
           ),
         ),
+        actions: <Widget>[
+    NotificationBellIcon(),
+  ],
       ),
       body: SingleChildScrollView(
         child: Column(
