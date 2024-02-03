@@ -157,19 +157,15 @@ Widget noticeCard(
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      '🔗 Attachments:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    for (String attachment in attachments)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: Text(attachment),
-                      ),
-                  ],
-                )
+                Text(
+                  '🔗 Attachments:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                for (String attachment in attachments)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Text(attachment),
+                  ),
               ],
             ),
           SizedBox(height: 8),

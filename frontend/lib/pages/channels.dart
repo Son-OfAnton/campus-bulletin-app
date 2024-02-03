@@ -373,53 +373,53 @@ class Channels extends ConsumerWidget {
     );
   }
 
-    Widget postCard(BuildContext context, String id, String channelName,
-        String channelDescription, String logoStr, isSubscribed) {
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SingleChannel(channelId: id)),
-          );
-        },
-        child: Card(
-          child: Column(children: [
-            ListTile(
-              // leading: FaIcon(FontAwesomeIcons.person),
-              leading: CircleAvatar(
-                radius: 25,
-                backgroundImage: MemoryImage(base64Decode(logoStr)),
-              ),
-              trailing: isSubscribed
-                  ? null
-                  : GestureDetector(
-                      onTap: () {
-                        debugPrint('Post to channel: $channelName');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Post()),
-                        );
-                      },
-                      child: FaIcon(
-                        FontAwesomeIcons.pen,
-                        color: primaryColor,
-                        size: 18,
-                      ),
-                    ),
-              title: Text(channelName,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: primaryColor)),
-              subtitle: Text(
-                channelDescription,
-                style: TextStyle(color: primaryColor),
-              ),
-              tileColor: Colors.white,
+  Widget postCard(BuildContext context, String id, String channelName,
+      String channelDescription, String logoStr, isSubscribed) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SingleChannel(channelId: id)),
+        );
+      },
+      child: Card(
+        child: Column(children: [
+          ListTile(
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundImage: MemoryImage(base64Decode(logoStr)),
             ),
-          ]),
-        ),
-      );
-    }
+            trailing: isSubscribed
+                ? null
+                : GestureDetector(
+                    onTap: () {
+                      debugPrint('Post to channel: $channelName');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Post(channelId: id)),
+                      );
+                    },
+                    child: FaIcon(
+                      FontAwesomeIcons.pen,
+                      color: primaryColor,
+                      size: 18,
+                    ),
+                  ),
+            title: Text(channelName,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: primaryColor)),
+            subtitle: Text(
+              channelDescription,
+              style: TextStyle(color: primaryColor),
+            ),
+            tileColor: Colors.white,
+          ),
+        ]),
+      ),
+    );
   }
+}
 
 Widget searchResult(channelId, channelName, String logoStr) {
   return Card(

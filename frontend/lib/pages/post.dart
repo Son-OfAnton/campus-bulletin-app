@@ -2,9 +2,24 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontend/components/Button.dart';
+import 'package:frontend/utils.dart';
 
-class Post extends StatelessWidget {
-  const Post({super.key});
+class Post extends StatefulWidget {
+  final String channelId;
+  Post({super.key, required this.channelId});
+
+  @override
+  _PostState createState() => _PostState();
+}
+
+class _PostState extends State<Post> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
+  TextEditingController attachmentsController = TextEditingController();
+  TextEditingController issuedFromController = TextEditingController();
+  TextEditingController issuedToController = TextEditingController();
+
+  List<bool> isSelected = [false, false, false];
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +45,7 @@ class Post extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
+                controller: titleController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Title',
@@ -39,6 +55,7 @@ class Post extends StatelessWidget {
               SizedBox(height: 16.0),
               SingleChildScrollView(
                 child: TextField(
+                  controller: bodyController,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: InputDecoration(
@@ -50,6 +67,7 @@ class Post extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               TextField(
+                controller: attachmentsController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Attachments',
@@ -58,14 +76,7 @@ class Post extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Category',
-                  labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
+                controller: issuedFromController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Issued from',
@@ -74,6 +85,7 @@ class Post extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               TextField(
+                controller: issuedToController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Issued to',
@@ -81,19 +93,110 @@ class Post extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16.0),
-              Text('Importance', style: TextStyle(fontSize: 14)),
-              SizedBox(height: 16.0),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 4.0,
-                children: <Widget>[
-                  RoundedChip(label: 'Low', color: Colors.green),
-                  RoundedChip(label: 'Medium', color: Colors.yellow),
-                  RoundedChip(label: 'High', color: Colors.red),
-                ],
+              Center(
+                child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: 4.0,
+                  children: <Widget>[
+                    // RoundedChip(
+                    //   label: 'Low',
+                    //   color: Colors.green,
+                    //   index: 0,
+                    // ),
+                    // RoundedChip(
+                    //   label: 'Medium',
+                    //   color: Colors.yellow,
+                    //   index: 1,
+                    // ),
+                    // RoundedChip(
+                    //   label: 'High',
+                    //   color: Colors.red,
+                    //   index: 2,
+                    // )
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isSelected.fillRange(0, isSelected.length, false);
+                          isSelected[0] = !isSelected[0];
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Chip(
+                          label: Text('Low'),
+                          shape: StadiumBorder(
+                            side: BorderSide.none,
+                          ),
+                          side: BorderSide(
+                            color: isSelected[0]
+                                ? Colors.green
+                                : Theme.of(context).dividerColor,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isSelected.fillRange(0, isSelected.length, false);
+                          isSelected[1] = !isSelected[1];
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Chip(
+                          label: Text('Medium'),
+                          shape: StadiumBorder(
+                            side: BorderSide.none,
+                          ),
+                          side: BorderSide(
+                            color: isSelected[1]
+                                ? Colors.yellow
+                                : Theme.of(context).dividerColor,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isSelected.fillRange(0, isSelected.length, false);
+                          isSelected[2] = !isSelected[2];
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Chip(
+                          label: Text('High'),
+                          shape: StadiumBorder(
+                            side: BorderSide.none,
+                          ),
+                          side: BorderSide(
+                            color: isSelected[2]
+                                ? Colors.red
+                                : Theme.of(context).dividerColor,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: 24.0),
-              Center(child: Button('Post', 0, () {})),
+              SizedBox(height: 32.0),
+              Center(
+                  child: Button('Post', 0, () {
+                createNotice(
+                    titleController.text,
+                    bodyController.text,
+                    attachmentsController.text,
+                    issuedFromController.text,
+                    issuedToController.text,
+                    isSelected.indexOf(true),
+                    widget.channelId);
+              })),
             ],
           ),
         ),
@@ -102,41 +205,44 @@ class Post extends StatelessWidget {
   }
 }
 
-class RoundedChip extends StatefulWidget {
-  final String label;
-  final Color color;
+// class RoundedChip extends StatefulWidget {
+//   final String label;
+//   final Color color;
+//   final int index;
 
-  RoundedChip({Key? key, required this.label, required this.color})
-      : super(key: key);
+//   RoundedChip({
+//     Key? key,
+//     required this.label,
+//     required this.color,
+//     required this.index,
+//   }) : super(key: key);
 
-  @override
-  _RoundedChipState createState() => _RoundedChipState();
-}
+//   @override
+//   _RoundedChipState createState() => _RoundedChipState();
+// }
 
-class _RoundedChipState extends State<RoundedChip> {
-  bool isSelected = false;
+// class _RoundedChipState extends State<RoundedChip> {
+//   // bool isSelected = false;
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          isSelected = !isSelected;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Chip(
-          label: Text(widget.label),
-          shape: StadiumBorder(
-            side: BorderSide.none,
-          ),
-          side: BorderSide(
-            color: isSelected ? widget.color : Theme.of(context).dividerColor,
-            width: 2.0,
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {},
+//       child: Container(
+//         padding: EdgeInsets.symmetric(horizontal: 8.0),
+//         child: Chip(
+//           label: Text(widget.label),
+//           shape: StadiumBorder(
+//             side: BorderSide.none,
+//           ),
+//           side: BorderSide(
+//             color: widget.isSelected
+//                 ? widget.color
+//                 : Theme.of(context).dividerColor,
+//             width: 2.0,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

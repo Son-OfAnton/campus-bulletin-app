@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => Login(),
         '/channels': (context) => Channels(),
         '/editProfile': (context) => const EditProfile(),
-        '/post': (context) => const Post(),
+        '/post': (context) => Post(channelId: 'hhhhh',),
         '/singleChannel': (context) => const SingleChannel(),
         '/viewProfile': (context) => const ViewProfile(),
         '/signup': (context) => Signup(),

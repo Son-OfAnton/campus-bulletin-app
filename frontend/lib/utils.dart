@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -185,7 +186,6 @@ void subscribeToChannel(String channelId) async {
   }
 }
 
-
 void unsubscribeFromChannel(String channelId) async {
   Dio dio = Dio();
   String token = await getToken();
@@ -205,7 +205,6 @@ void unsubscribeFromChannel(String channelId) async {
     debugPrint('Channel Unsubscribe Error: $e');
   }
 }
-
 
 Future<List<dynamic>> getNotices(String channelId) async {
   List<dynamic> notices = [];
@@ -231,4 +230,47 @@ Future<List<dynamic>> getNotices(String channelId) async {
   }
 
   return notices;
+}
+
+void createNotice(
+  String title,
+  String body,
+  String attachments,
+  String issuedFrom,
+  String issuedTo,
+  int priority,
+  String channelId,
+) async {
+  debugPrint(
+      'Creating Notice: $title, $body, $attachments, $issuedFrom, $issuedTo, $priority, $channelId');
+  Dio dio = Dio();
+  String token = await getToken();
+
+  Map<String, dynamic> reqBody = {
+    'title': title,
+    'body': body,
+    'date': '${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
+    'resources': [attachments], // Make sure attachments is a list
+    'categories': [3, 2],
+    'importance': priority,
+    'issuer': issuedFrom,
+    'audience': issuedTo,
+    'channelId': channelId,
+  };
+
+  try {
+    final response = await dio.post(
+      'http://localhost:5000/api/$channelId/notices/',
+      data: jsonEncode(reqBody),
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+
+    if (response.statusCode == 200) {
+      debugPrint('Notice Created');
+    } else {
+      debugPrint('Notice Not Created');
+    }
+  } catch (e) {
+    debugPrint('Notice Create Error: $e');
+  }
 }
