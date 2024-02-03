@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/Providers/auth_provider.dart';
 import 'package:frontend/components/Button.dart';
+import 'package:frontend/pages/post.dart';
+import 'package:frontend/pages/single_channel.dart';
 import 'package:frontend/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -325,8 +327,13 @@ class Channels extends ConsumerWidget {
                                 Map<String, dynamic> channel =
                                     snapshot.data![index];
 
-                                return postCard(channel['name'],
-                                    channel['description'], channel['logo']);
+                                return postCard(
+                                    context,
+                                    channel['id'],
+                                    channel['name'],
+                                    channel['description'],
+                                    channel['logo'],
+                                    isToggled);
                               });
                         }
                       })),
@@ -366,29 +373,53 @@ class Channels extends ConsumerWidget {
     );
   }
 
-  Widget postCard(
-      String channelName, String channelDescription, String logoStr) {
-    return Card(
-      child: Column(children: [
-        ListTile(
-          // leading: FaIcon(FontAwesomeIcons.person),
-          leading: CircleAvatar(
-            radius: 25,
-            backgroundImage: MemoryImage(base64Decode(logoStr)),
-          ),
-          title: Text(channelName,
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: primaryColor)),
-          subtitle: Text(
-            channelDescription,
-            style: TextStyle(color: primaryColor),
-          ),
-          tileColor: Colors.white,
+    Widget postCard(BuildContext context, String id, String channelName,
+        String channelDescription, String logoStr, isSubscribed) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SingleChannel(channelId: id)),
+          );
+        },
+        child: Card(
+          child: Column(children: [
+            ListTile(
+              // leading: FaIcon(FontAwesomeIcons.person),
+              leading: CircleAvatar(
+                radius: 25,
+                backgroundImage: MemoryImage(base64Decode(logoStr)),
+              ),
+              trailing: isSubscribed
+                  ? null
+                  : GestureDetector(
+                      onTap: () {
+                        debugPrint('Post to channel: $channelName');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Post()),
+                        );
+                      },
+                      child: FaIcon(
+                        FontAwesomeIcons.pen,
+                        color: primaryColor,
+                        size: 18,
+                      ),
+                    ),
+              title: Text(channelName,
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: primaryColor)),
+              subtitle: Text(
+                channelDescription,
+                style: TextStyle(color: primaryColor),
+              ),
+              tileColor: Colors.white,
+            ),
+          ]),
         ),
-      ]),
-    );
+      );
+    }
   }
-}
 
 Widget searchResult(channelId, channelName, String logoStr) {
   return Card(

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
+import 'package:frontend/components/Button.dart';
 
 class Post extends StatelessWidget {
   const Post({super.key});
@@ -36,11 +37,15 @@ class Post extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16.0),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Body',
-                  labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
+              SingleChildScrollView(
+                child: TextField(
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Body',
+                    labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -56,14 +61,6 @@ class Post extends StatelessWidget {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Category',
-                  labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Author',
                   labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
@@ -95,6 +92,8 @@ class Post extends StatelessWidget {
                   RoundedChip(label: 'High', color: Colors.red),
                 ],
               ),
+              SizedBox(height: 24.0),
+              Center(child: Button('Post', 0, () {})),
             ],
           ),
         ),
@@ -102,7 +101,6 @@ class Post extends StatelessWidget {
     );
   }
 }
-
 
 class RoundedChip extends StatefulWidget {
   final String label;
@@ -134,9 +132,7 @@ class _RoundedChipState extends State<RoundedChip> {
             side: BorderSide.none,
           ),
           side: BorderSide(
-            color: isSelected
-                ? widget.color
-                : Theme.of(context).dividerColor,
+            color: isSelected ? widget.color : Theme.of(context).dividerColor,
             width: 2.0,
           ),
         ),

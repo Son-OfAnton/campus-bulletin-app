@@ -1,20 +1,26 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:frontend/models/message.model.dart';
+import 'package:frontend/models/notice.model.dart';
+import 'package:frontend/utils.dart';
 
 class SingleChannel extends StatefulWidget {
-  const SingleChannel({Key? key}) : super(key: key);
+  const SingleChannel({Key? key, this.channelId}) : super(key: key);
+  final String? channelId;
 
   @override
   _SingleChannelState createState() => _SingleChannelState();
 }
 
 class _SingleChannelState extends State<SingleChannel> {
-  final TextEditingController _messageController = TextEditingController();
-  final List<String> _messages = [
-    'Hello',
-  ];
-  // final List<Map
+  late String? _channelId;
+
+  @override
+  void initState() {
+    super.initState();
+    _channelId = widget.channelId;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,7 @@ class _SingleChannelState extends State<SingleChannel> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text(
-          'Single Channel',
+          'Channel',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         centerTitle: true,
@@ -36,74 +42,164 @@ class _SingleChannelState extends State<SingleChannel> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                return ChatBubble(
-                  clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
-                  alignment: Alignment.topRight,
-                  margin: const EdgeInsets.all(10),
-                  backGroundColor: Theme.of(context).colorScheme.primary,
-                  child: Text(
-                    _messages[index],
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
+            child: FutureBuilder<List<dynamic>>(
+              future: getNotices(_channelId!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Unable to fetch notices');
+                } else if (snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.sentiment_dissatisfied,
+                            size: 100.0, color: Colors.grey),
+                        Text('No channels found',
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.grey)),
+                      ],
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> notice = snapshot.data![index];
+                      return noticeCard(
+                        notice['date'],
+                        notice['title'],
+                        notice['body'],
+                        notice['resources'],
+                        notice['importance'],
+                        notice['issuer'],
+                        notice['audience'],
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
-          _buildMessageComposer(),
         ],
       ),
     );
   }
+}
 
-  Widget _buildMessageComposer() {
-    return Container(
+Widget importanceChip(int importance) {
+  String label;
+  Color color;
+  switch (importance) {
+    case 0:
+      label = 'Low';
+      color = Colors.green;
+      break;
+    case 1:
+      label = 'Medium';
+      color = Colors.yellow;
+      break;
+    case 2:
+      label = 'High';
+      color = Colors.red;
+      break;
+    default:
+      label = 'Unknown';
+      color = Colors.black;
+  }
+
+  return Chip(
+    backgroundColor: color,
+    label: Text(label, style: TextStyle(color: Colors.white)),
+    shape: StadiumBorder(),
+  );
+}
+
+Widget noticeCard(
+  String date,
+  String title,
+  String body,
+  List<dynamic> attachments,
+  int importance,
+  String issuer,
+  String audience,
+) {
+  return Card(
+    margin: const EdgeInsets.all(10),
+    child: Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              maxLines: _messageController.text.isEmpty ? null : 2,
-              decoration: InputDecoration(
-                hintText: 'Type a message...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          Align(
+            alignment: Alignment.topRight,
+            child: Text('🗓️ $date'),
+          ),
+          SizedBox(height: 12),
+          Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
-              onChanged: (text) => {
-                setState(() {
-                  _messageController.text.isEmpty
-                      ? null
-                      : _messageController.text;
-                })
-              },
             ),
           ),
-          IconButton(
-            icon: Icon(Icons.send),
-            color: Theme.of(context).colorScheme.primary,
-            iconSize: 32,
-            onPressed: () {
-              _sendMessage();
-            },
+          SizedBox(height: 8),
+          Center(
+            child: Text(body),
+          ),
+          SizedBox(height: 8),
+          if (attachments.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '🔗 Attachments:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    for (String attachment in attachments)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: Text(attachment),
+                      ),
+                  ],
+                )
+              ],
+            ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Text('🚨 Importance: ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              importanceChip(importance),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Issuer: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(issuer),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Issued to: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(audience),
+            ],
           ),
         ],
       ),
-    );
-  }
-
-  void _sendMessage() {
-    String messageText = _messageController.text.trim();
-    if (messageText.isNotEmpty) {
-      setState(() {
-        _messages.add(messageText);
-        _messageController.clear();
-      });
-    }
-  }
+    ),
+  );
 }

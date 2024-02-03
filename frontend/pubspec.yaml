@@ -43,6 +43,7 @@ dependencies:
   flutter_riverpod: ^2.4.9
   motion_toast: ^2.8.0
   flutter_chat_bubble: ^2.0.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

@@ -205,3 +205,30 @@ void unsubscribeFromChannel(String channelId) async {
     debugPrint('Channel Unsubscribe Error: $e');
   }
 }
+
+
+Future<List<dynamic>> getNotices(String channelId) async {
+  List<dynamic> notices = [];
+  Dio dio = Dio();
+  String token = await getToken();
+
+  try {
+    final response = await dio.get(
+      'http://localhost:5000/api/$channelId/notices/',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+
+    Map<String, dynamic> responseObj = jsonDecode(response.toString());
+
+    if (response.statusCode == 200) {
+      debugPrint('Notices Fetched');
+      notices = responseObj['data'];
+    } else {
+      debugPrint('Notices Not Fetched');
+    }
+  } catch (e) {
+    debugPrint('Notices Fetch Error: $e');
+  }
+
+  return notices;
+}
