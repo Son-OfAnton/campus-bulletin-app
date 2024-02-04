@@ -115,6 +115,32 @@ class ChannelImageNotifier extends StateNotifier<File?> {
   }
 }
 
+final notificationProvider =
+    StateNotifierProvider<NotificationListState, List<Object>>((ref) {
+  return NotificationListState();
+});
+
+class NotificationListState extends StateNotifier<List<Object>> {
+  NotificationListState() : super(const []);
+
+  void addNotification(Object newNotification) {
+    state = [...state, newNotification];
+  }
+
+  void clearNotifications() {
+    state = [];
+  }
+}
+
+
+
+
+
+
+
+
+
+
 // final isSubscribedSelectedProvider = StateNotifierProvider<IsSubscribedSelectedNotifier, bool>((ref) {
 //   return IsSubscribedSelectedNotifier();
 // });

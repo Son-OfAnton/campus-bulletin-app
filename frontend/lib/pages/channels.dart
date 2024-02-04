@@ -14,6 +14,7 @@ import 'package:frontend/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:badges/src/badge.dart' as badges;
+import 'package:signalr_netcore2/signalr_client.dart' as signalr;
 
 final isToggledProvider = StateNotifierProvider<ToggleController, bool>(
   (ref) => ToggleController(),
@@ -37,8 +38,57 @@ class Channels extends ConsumerWidget {
   TextEditingController channelDescriptionController = TextEditingController();
   TextEditingController searchBarController = TextEditingController();
 
+  bool isJoined = false;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    int count = 0;
+
+    void handleChannelRegistration(List<Object?>? parameters) {
+      debugPrint('Received Notification: ${parameters![0]}');
+      count++;
+
+      ref.read(notificationProvider.notifier).addNotification(parameters[0]!);
+    }
+
+    // Future.delayed(Duration(seconds: 1), () {
+    //   ref.read(notificationProvider.notifier).clearNotifications();
+    // });
+    // {channelId: c0c04e83-f5b5-4fe0-b173-0cc0cedbc1a8, content: 4744ef0c-1c31-4fca-98db-bd528de5488f}
+
+    void startHubConnection() async {
+      debugPrint('Starting hub connection');
+      try {
+        final serverUrl = "http://localhost:5109/notificationHub";
+        final hubConnection =
+            signalr.HubConnectionBuilder().withUrl(serverUrl).build();
+        await hubConnection.start();
+        hubConnection.on('ReceiveNotification', handleChannelRegistration);
+
+        if (!isJoined) {
+          List<dynamic> subscribedChannels = await getMyChannels();
+          List<String> subscribedChannelsIds = [];
+
+          for (var channel in subscribedChannels) {
+            subscribedChannelsIds.add(channel['id']);
+          }
+
+          debugPrint('Subscribed Channels: $subscribedChannelsIds');
+          hubConnection
+              .invoke('JoinGroup', args: <Object>[subscribedChannelsIds]);
+          isJoined = true;
+        }
+      } catch (e) {
+        debugPrint('Failed to start hub connection: $e');
+      }
+    }
+
+    startHubConnection();
+
+    List<Object> notifications = ref.watch(notificationProvider.notifier).state;
+    debugPrint('Notifications from Riverpod: $notifications');
+    debugPrint('Notifications count: $count');
+
     File? imageFile = ref.watch(channelImageProvider);
     ChannelImageNotifier channelImageNotifier =
         ref.watch(channelImageProvider.notifier);
@@ -57,7 +107,7 @@ class Channels extends ConsumerWidget {
             Builder(builder: (context) {
               return badges.Badge(
                 badgeContent: Text(
-                  '3',
+                  '${notifications.length}',
                   style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold),
@@ -102,17 +152,40 @@ class Channels extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     )),
               ),
-              Column(children: [
-                GestureDetector(
-                  child: notificationCard('Peace club', 'I want peace', 1),
-                ),
-                GestureDetector(
-                  child: notificationCard('Peace club', 'I want peace', 1),
-                ),
-                GestureDetector(
-                  child: notificationCard('Peace club', 'I want peace', 1),
-                ),
-              ]),
+              FutureBuilder(
+                future: getNotificationDetails(notifications),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData) {
+                    return Column(
+                      children: (snapshot.data as List).map((n) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SingleChannel(channelId: n['channelId'])),
+                            );
+                          },
+                          child: notificationCard(
+                            n['channelName'],
+                            n['title'],
+                            n['importance'],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  } else {
+                    return Text('No notifications found.');
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -534,14 +607,16 @@ Widget searchResult(
 
 Widget notificationCard(
     String channelName, String noticeTitle, int importance) {
+  debugPrint(
+      'Debugging notificaitonCard: $channelName, $noticeTitle, $importance');
   return Card(
     child: Column(children: [
       ListTile(
         trailing: Icon(
           Icons.circle,
-          color: importance == 1
+          color: importance == 0
               ? Colors.green
-              : importance == 2
+              : importance == 1
                   ? Colors.yellow
                   : Colors.red,
         ),
