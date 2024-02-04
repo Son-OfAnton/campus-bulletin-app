@@ -47,9 +47,7 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  Future<void> onSave() async {
-
-  }
+  Future<void> onSave() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +114,9 @@ class _EditProfileState extends State<EditProfile> {
               ],
             ),
             SizedBox(height: 20.0),
-            ViewTextField(labelText: "Full Name", bottomMargin: 10.0),
+            ViewTextField(labelText: "First Name", bottomMargin: 10.0),
+            ViewTextField(labelText: "Last Name", bottomMargin: 10),
             ViewTextField(labelText: "Email", bottomMargin: 10.0),
-            ViewTextField(labelText: "Id", bottomMargin: 10.0),
             ViewTextField(labelText: "Department", bottomMargin: 10.0),
             ViewTextField(labelText: "Year", bottomMargin: 10.0),
             ViewTextField(labelText: "Phone Number", bottomMargin: 10.0),
