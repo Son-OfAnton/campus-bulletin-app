@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,6 +13,7 @@ import 'package:frontend/pages/single_channel.dart';
 import 'package:frontend/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:motion_toast/motion_toast.dart';
+import 'package:badges/src/badge.dart' as badges;
 
 final isToggledProvider = StateNotifierProvider<ToggleController, bool>(
   (ref) => ToggleController(),
@@ -52,6 +54,27 @@ class Channels extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
+          // title: Row(
+          //   children: [
+          //     Spacer(),
+          //     const Text(
+          //       'Channels',
+          //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          //     ),
+          //     Spacer(),
+          //     badges.Badge(
+          //       badgeContent: Text('3'),
+          //       badgeStyle: BadgeStyle(
+          //         padding: EdgeInsets.,
+          //         badgeColor: Colors.white,
+          //       ),
+          //       child: IconButton(
+          //         icon: const Icon(Icons.notifications_none_outlined),
+          //         onPressed: () {},
+          //       ),
+          //     ),
+          //   ],
+          // ),
           title: const Text(
             'Channels',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
