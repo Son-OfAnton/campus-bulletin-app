@@ -186,21 +186,24 @@ void subscribeToChannel(String channelId) async {
   }
 }
 
-void unsubscribeFromChannel(String channelId) async {
+Future<String?> unsubscribeFromChannel(String channelId) async {
   Dio dio = Dio();
   String token = await getToken();
 
   try {
-    final response = await dio.delete(
+    final response = await dio.post(
       'http://localhost:5279/api/channels/unsubscribe/$channelId',
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
+    Map<String, dynamic> responseObj = jsonDecode(response.toString());
+    debugPrint('Channel Unsubscribe Response: $response');
 
     if (response.statusCode == 200) {
       debugPrint('Channel Unsubscribed');
     } else {
       debugPrint('Channel Not Unsubscribed');
     }
+    return responseObj['message'];
   } catch (e) {
     debugPrint('Channel Unsubscribe Error: $e');
   }

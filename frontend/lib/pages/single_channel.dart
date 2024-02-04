@@ -58,7 +58,7 @@ class _SingleChannelState extends State<SingleChannel> {
                       children: [
                         Icon(Icons.sentiment_dissatisfied,
                             size: 100.0, color: Colors.grey),
-                        Text('No channels found',
+                        Text('No notice found',
                             style:
                                 TextStyle(fontSize: 20.0, color: Colors.grey)),
                       ],

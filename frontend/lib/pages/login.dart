@@ -25,8 +25,8 @@ class Login extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Future<void> onSubmit() async {
       Dio dio = Dio();
-      String userName = userNameController.text;
-      String password = passwordController.text;
+      String userName = userNameController.text.trim();
+      String password = passwordController.text.trim();
       final sharedPrefs = ref.watch(sharedPrefsProvider);
 
       debugPrint('Credentials: $userName $password');
@@ -105,7 +105,7 @@ class Login extends ConsumerWidget {
                     Column(
                       children: [
                         Text(
-                          "Already have an account? ",
+                          "Don't have an account? ",
                           style: TextStyle(
                             color: Color(0xFF322828),
                             fontFamily: 'Poppins',
