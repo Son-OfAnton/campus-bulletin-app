@@ -262,11 +262,29 @@ class Channels extends ConsumerWidget {
                                   child: const Text('Cancel'),
                                 ),
                                 TextButton(
-                                  onPressed: () {
-                                    createChannel(
+                                  onPressed: () async {
+                                    bool isSuccess = await createChannel(
                                         channelNameController.text,
                                         channelDescriptionController.text,
                                         imageFile!);
+
+                                    if (isSuccess) {
+                                      Future.delayed(Duration.zero, () {
+                                        MotionToast.success(
+                                          title: Text("Success"),
+                                          description: Text(
+                                              'Channel created successfully'),
+                                        ).show(context);
+                                      });
+                                    } else {
+                                      Future.delayed(Duration.zero, () {
+                                        MotionToast.error(
+                                          title: Text("Error"),
+                                          description:
+                                              Text('Unable to create channel'),
+                                        ).show(context);
+                                      });
+                                    }
                                     channelImageNotifier.clearImage();
                                     Navigator.pop(context);
                                   },
@@ -594,8 +612,25 @@ Widget searchResult(
             backgroundColor: MaterialStateProperty.all(
                 Theme.of(context).colorScheme.primary),
           ),
-          onPressed: () {
-            subscribeToChannel(channelId);
+          onPressed: () async {
+            bool isSuccess = await subscribeToChannel(channelId);
+            if (isSuccess) {
+              Future.delayed(Duration.zero, () {
+                MotionToast.success(
+                  title: Text("Success"),
+                  description: Text('Subscribed to $channelName'),
+                ).show(context);
+              });
+              Navigator.pop(context);
+            } else {
+              Future.delayed(Duration.zero, () {
+                MotionToast.error(
+                  title: Text("Error"),
+                  description: Text('Unable to subscribe to $channelName'),
+                ).show(context);
+              });
+              Navigator.pop(context);
+            }
           },
           child: const Text('Subscribe'),
         ),

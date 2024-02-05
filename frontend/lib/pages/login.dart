@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/Providers/auth_provider.dart';
 import 'package:frontend/pages/channels.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/TextField.dart';
 import '../components/CustomAppBar.dart';
@@ -46,6 +47,12 @@ class Login extends ConsumerWidget {
         debugPrint('ResponseObj: $responseObj');
 
         if (responseObj['isSuccess'] == true) {
+          Future.delayed(Duration.zero, () {
+            MotionToast.success(
+              title: Text("Success"),
+              description: Text('Signed in successfully'),
+            ).show(context);
+          });
           debugPrint('Login successful: $response');
           sharedPrefs.whenData((sharedPrefs) {
             sharedPrefs.setString('token', responseObj['data']['token']);
@@ -54,6 +61,12 @@ class Login extends ConsumerWidget {
           });
         } else {
           debugPrint('Login failed: $response');
+          Future.delayed(Duration.zero, () {
+            MotionToast.error(
+              title: Text("Error"),
+              description: Text('Invalid credentials'),
+            ).show(context);
+          });
         }
 
         if (response.statusCode == 200) {
@@ -64,6 +77,12 @@ class Login extends ConsumerWidget {
             context, MaterialPageRoute(builder: (context) => Channels()));
       } catch (e) {
         debugPrint('Error: $e');
+        Future.delayed(Duration.zero, () {
+          MotionToast.error(
+            title: Text("Error"),
+            description: Text('Invalid credentials'),
+          ).show(context);
+        });
       }
     }
 

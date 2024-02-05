@@ -26,7 +26,7 @@ Future<String> getToken() async {
   }
 }
 
-void createChannel(String name, String description, File image) async {
+Future<bool> createChannel(String name, String description, File image) async {
   Dio dio = Dio();
   String token = await getToken();
   debugPrint('JWT Token: $token');
@@ -45,12 +45,15 @@ void createChannel(String name, String description, File image) async {
     debugPrint('Create Channel Response: $response');
     if (response.statusCode == 201) {
       debugPrint('Channel Created');
+      return true;
     } else {
       debugPrint('Channel Not Created');
     }
   } catch (e) {
     debugPrint('Channel Create Error: $e');
+    return false;
   }
+  return false;
 }
 
 Future<List<dynamic>> getSubscribedChannels() async {
@@ -166,7 +169,7 @@ Future<String> getCurrUserId() async {
   return '';
 }
 
-void subscribeToChannel(String channelId) async {
+Future<bool> subscribeToChannel(String channelId) async {
   Dio dio = Dio();
   String token = await getToken();
 
@@ -178,12 +181,14 @@ void subscribeToChannel(String channelId) async {
 
     if (response.statusCode == 200) {
       debugPrint('Channel Subscribed');
+      return true;
     } else {
       debugPrint('Channel Not Subscribed');
     }
   } catch (e) {
     debugPrint('Channel Subscribe Error: $e');
   }
+  return false;
 }
 
 Future<String?> unsubscribeFromChannel(String channelId) async {
@@ -235,7 +240,7 @@ Future<List<dynamic>> getNotices(String channelId) async {
   return notices;
 }
 
-void createNotice(
+Future<bool> createNotice(
   String title,
   String body,
   String attachments,
@@ -270,12 +275,15 @@ void createNotice(
 
     if (response.statusCode == 200) {
       debugPrint('Notice Created');
+      return true;
     } else {
       debugPrint('Notice Not Created');
     }
   } catch (e) {
     debugPrint('Notice Create Error: $e');
+    return false;
   }
+  return false;
 }
 
 Future<Map<String, dynamic>?> getSingleChannel(String channelId) async {
