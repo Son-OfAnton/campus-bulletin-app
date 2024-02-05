@@ -39,6 +39,7 @@ class Channels extends ConsumerWidget {
   TextEditingController searchBarController = TextEditingController();
 
   bool isJoined = false;
+  bool isHomeSelected = true;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -188,6 +189,33 @@ class Channels extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+        bottomNavigationBar: NavigationBar(
+          destinations: const [
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.person),
+              icon: Icon(Icons.person_outline),
+              label: 'Profile',
+            ),
+          ],
+          surfaceTintColor: Colors.white,
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          selectedIndex: isHomeSelected ? 0 : 1,
+          onDestinationSelected: (int index) {
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/channels');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/editProfile');
+                break;
+            }
+          },
         ),
         body: Builder(builder: (context) {
           return Column(

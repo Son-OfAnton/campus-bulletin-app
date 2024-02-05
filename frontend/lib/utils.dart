@@ -89,6 +89,7 @@ Future<List<dynamic>> getMyChannels() async {
   List<dynamic> channels = [];
   Dio dio = Dio();
   String token = await getToken();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
 
   try {
     final response = await dio.get('http://localhost:5279/api/channels/admin',
@@ -98,13 +99,15 @@ Future<List<dynamic>> getMyChannels() async {
 
     // debugPrint('My Channels Response: $response');
     if (response.statusCode == 200) {
-      // debugPrint('My Channels Fetched wooohooooo');
+      debugPrint('My Channels Fetched wooohooooo');
       channels = responseObj['data'];
+      debugPrint('Creator ID: ${responseObj['data'][0]['creatorId']}');
+      prefs.setString('currUserId', responseObj['data'][0]['creatorId']);
     } else {
       // debugPrint('My Channels Not Fetched');
     }
   } catch (e) {
-    // debugPrint('My Channels Fetch Error: $e');
+    debugPrint('My Channels Fetch Error: $e');
   }
 
   return channels;
@@ -391,5 +394,30 @@ Future<Map<String, dynamic>?> getSingleNotice(
     }
   } catch (e) {
     debugPrint('Notice Fetch Error: $e');
+  }
+}
+
+Future<Map<String, dynamic>?> getProfileDetails() async {
+  Dio dio = Dio();
+  String token = await getToken();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? currUserId = prefs.getString('currUserId');
+
+  debugPrint('Current User ID from getProfileDetails: $currUserId');
+
+  try {
+    final response = await dio.get('http://localhost:5006/api/user/$currUserId',
+        options: Options(headers: {'Authorization': 'Bearer $token'}));
+
+    Map<String, dynamic> responseObj = jsonDecode(response.toString());
+
+    if (response.statusCode == 200) {
+      debugPrint('Profile Fetched');
+      return responseObj['data'];
+    } else {
+      debugPrint('Profile Not Fetched');
+    }
+  } catch (e) {
+    debugPrint('Profile Fetch Error: $e');
   }
 }

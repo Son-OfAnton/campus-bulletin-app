@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => Login(),
         '/channels': (context) => Channels(),
-        '/editProfile': (context) => const EditProfile(),
+        '/editProfile': (context) => EditProfile(),
         '/post': (context) => Post(
               channelId: 'hhhhh',
             ),
