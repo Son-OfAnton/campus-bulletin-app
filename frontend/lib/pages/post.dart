@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/Button.dart';
 import 'package:frontend/utils.dart';
+import 'package:motion_toast/motion_toast.dart';
 
 class Post extends StatefulWidget {
   final String channelId;
@@ -187,8 +188,8 @@ class _PostState extends State<Post> {
               ),
               SizedBox(height: 32.0),
               Center(
-                  child: Button('Post', 0, () {
-                createNotice(
+                  child: Button('Post', 0, () async {
+                bool isSuccess = await createNotice(
                     titleController.text,
                     bodyController.text,
                     attachmentsController.text,
@@ -196,6 +197,23 @@ class _PostState extends State<Post> {
                     issuedToController.text,
                     isSelected.indexOf(true),
                     widget.channelId);
+
+                if (isSuccess) {
+                  Future.delayed(Duration.zero, () {
+                    MotionToast.success(
+                      title: Text("Success"),
+                      description: Text('Notice posted successfully'),
+                    ).show(context);
+                    Navigator.pop(context);
+                  });
+                } else {
+                  Future.delayed(Duration.zero, () {
+                    MotionToast.error(
+                      title: Text("Error"),
+                      description: Text('Failed to post notice'),
+                    ).show(context);
+                  });
+                }
               })),
             ],
           ),

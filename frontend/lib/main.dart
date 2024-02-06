@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:frontend/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:signalr_netcore2/signalr_client.dart';
 import 'pages/channels.dart';
 import 'pages/edit_profile.dart';
 import 'pages/login.dart';
@@ -33,8 +35,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => Login(),
         '/channels': (context) => Channels(),
-        '/editProfile': (context) => const EditProfile(),
-        '/post': (context) => Post(channelId: 'hhhhh',),
+        '/editProfile': (context) => EditProfile(),
+        '/post': (context) => Post(
+              channelId: 'hhhhh',
+            ),
         '/singleChannel': (context) => const SingleChannel(),
         '/viewProfile': (context) => const ViewProfile(),
         '/signup': (context) => Signup(),

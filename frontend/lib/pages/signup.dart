@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/Providers/auth_provider.dart';
 import 'package:frontend/models/student.model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:motion_toast/motion_toast.dart';
 import '../components/TextField.dart';
 import '../components/CustomAppBar.dart';
 import '../components/Button.dart';
@@ -53,6 +54,9 @@ class Signup extends ConsumerWidget {
           'http://localhost:5006/api/user/register',
           data: student.toJson(),
         );
+
+        Map<String, dynamic> responseObj = jsonDecode(response.toString());
+
         if (response.statusCode == 201) {
           debugPrint('User registration successful: $response');
           sharedPrefs.whenData((sharedPrefs) async {
@@ -63,17 +67,31 @@ class Signup extends ConsumerWidget {
             await sharedPrefs.setString('phoneNumber', student.phoneNumber!);
             await sharedPrefs.setString('avatar', student.avatar!);
           });
+          Future.delayed(Duration.zero, () {
+            MotionToast.success(
+                    description: Text('User registered successfully'))
+                .show(context);
+          });
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Login()),
           );
         } else {
           debugPrint('Error during user registration: ${response.statusCode}');
+          Future.delayed(Duration.zero, () {
+            MotionToast.error(
+                    description: Text(responseObj['message'].join(', ')))
+                .show(context);
+          });
         }
       } catch (e) {
         debugPrint('Error: $e');
         // debugPrint('Response: $response');
         debugPrint('Studentinfo: ${student.toJson()}');
+        Future.delayed(Duration.zero, () {
+          MotionToast.error(description: Text('Please enter valid details'))
+              .show(context);
+        });
       }
     }
 
@@ -101,6 +119,23 @@ class Signup extends ConsumerWidget {
                 Form(
                     key: signupKey,
                     child: Column(children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 15.0),
+                        child: TextButton(
+                          onPressed: () async {
+                            // await _pickImage(ImageSource.gallery);
+                            await imageFileNotifier
+                                .pickImage(ImageSource.gallery);
+                          },
+                          child: Text('Pick a profile image'),
+                        ),
+                      ),
+                      if (imageFile != null)
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: FileImage(imageFile),
+                        ),
+                      SizedBox(height: 15.0),
                       CustomTextField(
                         controller: firstNameController,
                         hintText: 'First name',
@@ -216,22 +251,22 @@ class Signup extends ConsumerWidget {
                           debugPrint('Confirm Password: $value');
                         },
                       ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 15.0),
-                        child: TextButton(
-                          onPressed: () async {
-                            // await _pickImage(ImageSource.gallery);
-                            await imageFileNotifier
-                                .pickImage(ImageSource.gallery);
-                          },
-                          child: Text('Pick a profile image'),
-                        ),
-                      ),
-                      if (imageFile != null)
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: FileImage(imageFile),
-                        ),
+                      // Container(
+                      //   margin: EdgeInsets.only(bottom: 15.0),
+                      //   child: TextButton(
+                      //     onPressed: () async {
+                      //       // await _pickImage(ImageSource.gallery);
+                      //       await imageFileNotifier
+                      //           .pickImage(ImageSource.gallery);
+                      //     },
+                      //     child: Text('Pick a profile image'),
+                      //   ),
+                      // ),
+                      // if (imageFile != null)
+                      //   CircleAvatar(
+                      //     radius: 50,
+                      //     backgroundImage: FileImage(imageFile),
+                      //   ),
                       SizedBox(height: 15.0),
                       Button("Sign up", 50.0, onSubmit),
                       Column(

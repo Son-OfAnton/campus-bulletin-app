@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/pages/edit_profile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -114,6 +115,55 @@ class ChannelImageNotifier extends StateNotifier<File?> {
     state = null;
   }
 }
+
+final EditProfileImageProvider =
+    StateNotifierProvider<EditProfileImageNotifier, File?>((ref) {
+  return EditProfileImageNotifier();
+});
+
+class EditProfileImageNotifier extends StateNotifier<File?> {
+  EditProfileImageNotifier() : super(null);
+
+  final ImagePicker _imagePicker = ImagePicker();
+  String imageUrl = 'https://picsum.photos/250?image=9';
+
+  Future<void> pickImage(ImageSource source) async {
+    final pickedFile = await _imagePicker.pickImage(source: source);
+    if (pickedFile != null) {
+      state = File(pickedFile.path);
+    }
+  }
+
+  void clearImage() {
+    state = null;
+  }
+}
+
+final notificationProvider =
+    StateNotifierProvider<NotificationListState, List<Object>>((ref) {
+  return NotificationListState();
+});
+
+class NotificationListState extends StateNotifier<List<Object>> {
+  NotificationListState() : super(const []);
+
+  void addNotification(Object newNotification) {
+    state = [...state, newNotification];
+  }
+
+  void clearNotifications() {
+    state = [];
+  }
+}
+
+
+
+
+
+
+
+
+
 
 // final isSubscribedSelectedProvider = StateNotifierProvider<IsSubscribedSelectedNotifier, bool>((ref) {
 //   return IsSubscribedSelectedNotifier();
