@@ -12,7 +12,7 @@ Before you begin, ensure you have met the following requirements:
   - [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
   - [Docker](https://www.docker.com/products/docker-desktop)
 
-- **Frontend Requirements**:
+- **App Requirements**:
   - [Flutter SDK](https://flutter.dev/docs/get-started/install)
   - [Android Studio](https://developer.android.com/studio) or [Visual Studio Code](https://code.visualstudio.com/) with Flutter extension
 ## Setup
@@ -22,7 +22,7 @@ Before you begin, ensure you have met the following requirements:
 1. **Download the Backend Code**:
    Clone the repository containing the backend code.
    ```bash
-
+   https://github.com/Amanuel94/campus-bulletin-board-api
    cd campus-bulletin-board-api-main
    ```
 
