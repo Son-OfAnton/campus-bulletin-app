@@ -140,19 +140,27 @@ class EditProfileImageNotifier extends StateNotifier<File?> {
 }
 
 final notificationProvider =
-    StateNotifierProvider<NotificationListState, List<Object>>((ref) {
+    StateNotifierProvider<NotificationListState, List<dynamic>>((ref) {
   return NotificationListState();
 });
 
-class NotificationListState extends StateNotifier<List<Object>> {
+class NotificationListState extends StateNotifier<List<dynamic>> {
   NotificationListState() : super(const []);
 
-  void addNotification(Object newNotification) {
+  void addNotification(dynamic newNotification) {
     state = [...state, newNotification];
   }
 
   void clearNotifications() {
     state = [];
+  }
+
+  void removeNotification(dynamic notification) {
+    debugPrint("Notification to remove: $notification['content']");
+    debugPrint('State before: $state');
+    state =
+        state.where((n) => n['channelId'] != notification['channelId']).toList();
+    debugPrint('State after: $state');
   }
 }
 

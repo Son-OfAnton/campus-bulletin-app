@@ -312,7 +312,7 @@ Future<Map<String, dynamic>?> getSingleChannel(String channelId) async {
   }
 }
 
-Future<dynamic> getNotificationDetails(List<Object> notifications) async {
+Future<dynamic> getNotificationDetails(List<dynamic> notifications) async {
   Dio dio = Dio();
   String token = await getToken();
   String channelName = '';

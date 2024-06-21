@@ -86,7 +86,8 @@ class Channels extends ConsumerWidget {
 
     startHubConnection();
 
-    List<Object> notifications = ref.watch(notificationProvider.notifier).state;
+    List<dynamic> notifications =
+        ref.watch(notificationProvider.notifier).state;
     debugPrint('Notifications from Riverpod: $notifications');
     debugPrint('Notifications count: $count');
 
@@ -167,6 +168,9 @@ class Channels extends ConsumerWidget {
                       children: (snapshot.data as List).map((n) {
                         return GestureDetector(
                           onTap: () {
+                            ref
+                                .read(notificationProvider.notifier)
+                                .removeNotification(n);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

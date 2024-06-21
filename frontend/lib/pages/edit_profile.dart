@@ -275,8 +275,8 @@ class EditProfile extends ConsumerWidget {
                       controller: phoneNumberController,
                       decoration: InputDecoration(labelText: "Phone Number"),
                       validator: (value) =>
-                          value == null || value.isEmpty || value.length < 10
-                              ? 'Please enter your phone number'
+                          value == null || value.isEmpty || value.length != 10
+                              ? 'Invalid phone number'
                               : null,
                     ),
                     TextFormField(
